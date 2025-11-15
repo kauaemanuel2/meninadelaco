@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { FaPaperPlane, FaGift } from 'react-icons/fa';
-import toast from 'react-hot-toast';
 import './Newsletter.css';
 
-const Newsletter = () => {
+const Newsletter = ({ showToast }) => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -11,12 +10,12 @@ const Newsletter = () => {
     e.preventDefault();
     
     if (!email) {
-      toast.error('Por favor, digite seu email');
+      alert('Por favor, digite seu email');
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(email)) {
-      toast.error('Por favor, digite um email válido');
+      alert('Por favor, digite um email válido');
       return;
     }
 
@@ -25,10 +24,21 @@ const Newsletter = () => {
     // Simulação de cadastro
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('🎉 Cadastrado com sucesso! Você ganhou 10% de desconto na primeira compra.');
+      
+      // Usando alert como fallback
+      if (showToast) {
+        showToast('🎉 Cadastrado com sucesso! Você ganhou 10% de desconto na primeira compra.');
+      } else {
+        alert('🎉 Cadastrado com sucesso! Você ganhou 10% de desconto na primeira compra.');
+      }
+      
       setEmail('');
     } catch (error) {
-      toast.error('Erro ao cadastrar. Tente novamente.');
+      if (showToast) {
+        showToast('Erro ao cadastrar. Tente novamente.', 'error');
+      } else {
+        alert('Erro ao cadastrar. Tente novamente.');
+      }
     } finally {
       setIsLoading(false);
     }

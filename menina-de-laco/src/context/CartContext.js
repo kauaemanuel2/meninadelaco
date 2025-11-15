@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import toast from 'react-hot-toast';
 
 const CartContext = createContext();
 
@@ -8,7 +7,10 @@ const cartReducer = (state, action) => {
     case 'ADD_TO_CART':
       const existingItem = state.items.find(item => item.id === action.payload.id);
       if (existingItem) {
-        toast.success('Quantidade atualizada no carrinho!');
+        // Mostrar toast através da função passada via props
+        if (action.showToast) {
+          action.showToast('Quantidade atualizada no carrinho!');
+        }
         return {
           ...state,
           items: state.items.map(item =>
@@ -18,14 +20,19 @@ const cartReducer = (state, action) => {
           )
         };
       }
-      toast.success('Produto adicionado ao carrinho!');
+      // Mostrar toast através da função passada via props
+      if (action.showToast) {
+        action.showToast('Produto adicionado ao carrinho!');
+      }
       return {
         ...state,
         items: [...state.items, { ...action.payload, quantity: 1 }]
       };
 
     case 'REMOVE_FROM_CART':
-      toast.success('Produto removido do carrinho!');
+      if (action.showToast) {
+        action.showToast('Produto removido do carrinho!');
+      }
       return {
         ...state,
         items: state.items.filter(item => item.id !== action.payload)
@@ -56,15 +63,15 @@ const initialState = {
   items: []
 };
 
-export const CartProvider = ({ children }) => {
+export const CartProvider = ({ children, showToast }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   const addToCart = (product) => {
-    dispatch({ type: 'ADD_TO_CART', payload: product });
+    dispatch({ type: 'ADD_TO_CART', payload: product, showToast });
   };
 
   const removeFromCart = (productId) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
+    dispatch({ type: 'REMOVE_FROM_CART', payload: productId, showToast });
   };
 
   const updateQuantity = (productId, quantity) => {
@@ -78,7 +85,7 @@ export const CartProvider = ({ children }) => {
 
   const getCartTotal = () => {
     return state.items.reduce((total, item) => {
-      const price = parseFloat(item.price.replace('R$', '').replace(',', '.'));
+      const price = parseFloat(item.price.replace('R$', '').replace(',', '.').trim());
       return total + (price * item.quantity);
     }, 0);
   };
