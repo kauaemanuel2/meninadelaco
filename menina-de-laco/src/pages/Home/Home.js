@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { products } from '../../data/products';
-import ProductCard from '../../components/ProductCard/ProductCard';
+import Carousel from '../../components/Carousel/Carousel';
 import Newsletter from '../../components/Newsletter/Newsletter';
+import ProductCard from '../../components/ProductCard/ProductCard';
+import { productsApi } from '../../config/supabase';
 import { 
   FaShippingFast, 
   FaShieldAlt, 
@@ -12,8 +13,81 @@ import {
 import './Home.css';
 
 const Home = () => {
-  const featuredProducts = products.filter(product => product.featured);
-  const bestSellers = products.slice(0, 4);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadFeaturedProducts();
+  }, []);
+
+  const loadFeaturedProducts = async () => {
+    try {
+      setLoading(true);
+      const products = await productsApi.getProducts({ featured: true });
+      
+      // Garantir que todos os produtos têm a estrutura correta
+      const validatedProducts = products.map(product => ({
+        id: product.id || 'unknown',
+        name: product.name || 'Produto sem nome',
+        price: typeof product.price === 'number' ? product.price : 0,
+        original_price: product.original_price || null,
+        description: product.description || product.short_description || '',
+        short_description: product.short_description || '',
+        category: product.category || { id: '1', name: 'Categoria' },
+        images: product.images || [],
+        attributes: product.attributes || [],
+        featured: product.featured || false,
+        in_stock: product.in_stock !== undefined ? product.in_stock : true,
+        stock_quantity: product.stock_quantity || 0,
+        features: product.attributes?.map(attr => attr.attribute_value) || []
+      }));
+      
+      setFeaturedProducts(validatedProducts.slice(0, 4));
+    } catch (err) {
+      console.error('Erro ao carregar produtos:', err);
+      setError('Erro ao carregar produtos em destaque');
+      
+      // Produtos de fallback
+      setFeaturedProducts([
+        {
+          id: '1',
+          name: 'Laço de Seda Premium Rosa',
+          price: 29.90,
+          description: 'Laço premium em seda natural com detalhes em renda.',
+          featured: true,
+          features: ['Seda natural', 'Fecho de velcro']
+        },
+        {
+          id: '2',
+          name: 'Laço com Pérolas Branco',
+          price: 34.90,
+          description: 'Elegante laço branco adornado com pérolas naturais.',
+          featured: true,
+          features: ['Pérolas naturais', 'Tecido premium']
+        },
+        {
+          id: '3',
+          name: 'Kit Laços Coloridos Arco-Íris',
+          price: 49.90,
+          original_price: 69.90,
+          description: 'Kit com 5 laços coloridos para combinar com todas as roupas.',
+          featured: true,
+          features: ['5 laços diferentes', 'Cores vibrantes']
+        },
+        {
+          id: '4',
+          name: 'Laço Baby Azul Celeste',
+          price: 22.90,
+          description: 'Laço delicado especialmente desenvolvido para bebês.',
+          featured: true,
+          features: ['Material hipoalergênico', 'Fecho extra macio']
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -40,37 +114,9 @@ const Home = () => {
 
   return (
     <div className="home">
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="container">
-          <div className="hero-content">
-            <div className="hero-text">
-              <h1 className="hero-title">
-                Laços Encantadores para 
-                <span className="highlight"> Sua Princesa</span>
-              </h1>
-              <p className="hero-description">
-                Descubra nossa coleção exclusiva de laços infantis feitos com amor, 
-                qualidade e atenção aos detalhes. Cada peça é única e especial!
-              </p>
-              <div className="hero-actions">
-                <Link to="/produtos" className="btn btn-large">
-                  Ver Coleção
-                </Link>
-                <Link to="/sobre" className="btn btn-secondary btn-large">
-                  Conheça Nossa História
-                </Link>
-              </div>
-            </div>
-            <div className="hero-image">
-              <div className="floating-elements">
-                <div className="floating-element element-1">🎀</div>
-                <div className="floating-element element-2">✨</div>
-                <div className="floating-element element-3">💖</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Carrossel */}
+      <section className="hero-carousel">
+        <Carousel />
       </section>
 
       {/* Features Section */}
@@ -94,28 +140,31 @@ const Home = () => {
       <section className="featured-products">
         <div className="container">
           <h2 className="section-title">Produtos em Destaque</h2>
-          <div className="products-grid">
-            {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <div className="section-actions">
-            <Link to="/produtos" className="btn btn-large">
-              Ver Todos os Produtos
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Best Sellers */}
-      <section className="best-sellers">
-        <div className="container">
-          <h2 className="section-title">Mais Vendidos</h2>
-          <div className="products-grid">
-            {bestSellers.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="products-loading">
+              <div className="loading-spinner"></div>
+            </div>
+          ) : error ? (
+            <div className="products-error">
+              <p>{error}</p>
+              <button onClick={loadFeaturedProducts} className="btn">
+                Tentar novamente
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="products-grid">
+                {featuredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              <div className="section-actions">
+                <Link to="/produtos" className="btn btn-large">
+                  Ver Todos os Produtos
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 

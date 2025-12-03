@@ -263,3 +263,8 @@
     font-size: 0.65rem;
   }
 }
+
+  .logo-icon img {
+    width: 120px;
+    height: auto;
+  }

@@ -61,7 +61,7 @@ const Header = () => {
             </button>
 
             <Link to="/" className="logo" onClick={closeMenu}>
-              <span className="logo-icon">🎀</span>
+              <span className="logo-icon"><img src="/images/logo.png" alt="Menina de Laço" className="logo-icon" /></span>
               <div className="logo-text">
                 <span className="logo-main">Menina de Laço</span>
                 <span className="logo-sub">Laços & Acessórios</span>

@@ -148,6 +148,22 @@
   margin-bottom: 1rem;
 }
 
+.product-error {
+  padding: 2rem;
+  text-align: center;
+  color: var(--gray);
+  background: var(--light-gray);
+  border-radius: var(--border-radius);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-error p {
+  margin: 0;
+}
+
 .current-price {
   font-size: 1.3rem;
   font-weight: 700;

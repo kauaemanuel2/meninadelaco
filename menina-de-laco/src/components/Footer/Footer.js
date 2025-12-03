@@ -21,7 +21,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="footer-section">
             <div className="footer-logo">
-              <span className="logo-icon">🎀</span>
+              <span className="logo-icon"><img src="/images/logo.png" alt="Menina de Laço" className="logo-icon" /></span>
               <div className="logo-text">
                 <span className="logo-main">Menina de Laço</span>
                 <span className="logo-sub">Laços & Acessórios</span>
@@ -77,7 +77,7 @@ const Footer = () => {
             <div className="contact-info">
               <div className="contact-item">
                 <FaWhatsapp className="contact-icon" />
-                <span>(11) 99999-9999</span>
+                <span>(84) 98726-9229</span>
               </div>
               <div className="contact-item">
                 <FaEnvelope className="contact-icon" />
@@ -85,7 +85,7 @@ const Footer = () => {
               </div>
               <div className="contact-item">
                 <FaMapMarkerAlt className="contact-icon" />
-                <span>São Paulo - SP</span>
+                <span>Natal - RN</span>
               </div>
               <div className="contact-item">
                 <FaShippingFast className="contact-icon" />

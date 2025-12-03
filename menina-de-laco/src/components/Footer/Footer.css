@@ -161,6 +161,10 @@
 .footer-bottom-links a:hover {
   color: var(--light-pink);
 }
+.logo-icon img {
+    width: 120px;
+    height: auto;
+  }
 
 @media (max-width: 1024px) {
   .footer-content {
