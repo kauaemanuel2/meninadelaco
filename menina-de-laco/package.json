@@ -20,7 +20,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-<<<<<<< HEAD
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -29,13 +28,6 @@
     "react-icons": "^4.7.1",
     "@supabase/supabase-js": "^2.39.0",
     "date-fns": "^2.30.0"
-=======
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
->>>>>>> parent of f162da9 (Incremental-Commit)
   },
   "browserslist": {
     "production": [
